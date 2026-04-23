@@ -1,0 +1,14 @@
+{
+  "name": "cbs-workflows",
+  "version": "0.1.0",
+  "description": "CDP Browser Session workflows for reusable browser automation over logged-in, persistent sessions.",
+  "type": "commonjs",
+  "scripts": {
+    "browser:smoke": "node scripts/browser-smoke.js",
+    "browser:init": "node scripts/browser-session-setup.js",
+    "browser:session-setup": "node scripts/browser-session-setup.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}
