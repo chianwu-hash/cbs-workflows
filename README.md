@@ -21,6 +21,8 @@ It intentionally does not contain product-specific workflows, prompt sequences, 
 
 ## Quick Start
 
+Use from this repo directly:
+
 Install dependencies:
 
 ```powershell
@@ -31,6 +33,29 @@ Prepare a logged-in browser session:
 
 ```powershell
 npm run browser:init
+```
+
+## Install In Another Project
+
+This package is not published to npm yet, but another local project can install it from GitHub:
+
+```powershell
+npm install github:chianwu-hash/cbs-workflows
+```
+
+Then run the initializer through `npx`:
+
+```powershell
+npx cbs-browser-init --app gemini --browser chrome --auto-port
+```
+
+Or import the module:
+
+```js
+const {
+  readSessionConfig,
+  verifyPlaywrightConnection,
+} = require('cbs-workflows');
 ```
 
 The initializer will ask for the target app, browser, debugging port, and profile directory. If you do not know which port to use, press Enter and it will find a free port starting from `9222`.

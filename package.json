@@ -3,6 +3,22 @@
   "version": "0.1.0",
   "description": "CDP Browser Session workflows for reusable browser automation over logged-in, persistent sessions.",
   "type": "commonjs",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./browser-session-init": "./lib/browser-session-init/index.js"
+  },
+  "bin": {
+    "cbs-browser-init": "scripts/browser-session-setup.js",
+    "cbs-browser-smoke": "scripts/browser-smoke.js"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "scripts/",
+    "docs/",
+    "README.md"
+  ],
   "scripts": {
     "browser:smoke": "node scripts/browser-smoke.js",
     "browser:init": "node scripts/browser-session-setup.js",

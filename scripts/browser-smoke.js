@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { chromium } = require('playwright');
 const { readSessionConfig } = require('../lib/browser-session-init');
 
