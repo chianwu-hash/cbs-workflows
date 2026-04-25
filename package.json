@@ -10,7 +10,8 @@
   },
   "bin": {
     "cbs-browser-init": "scripts/browser-session-setup.js",
-    "cbs-browser-smoke": "scripts/browser-smoke.js"
+    "cbs-browser-smoke": "scripts/browser-smoke.js",
+    "cbs-guided-start": "scripts/guided-start.js"
   },
   "files": [
     "index.js",
@@ -22,7 +23,8 @@
   "scripts": {
     "browser:smoke": "node scripts/browser-smoke.js",
     "browser:init": "node scripts/browser-session-setup.js",
-    "browser:session-setup": "node scripts/browser-session-setup.js"
+    "browser:session-setup": "node scripts/browser-session-setup.js",
+    "guided:start": "node scripts/guided-start.js"
   },
   "devDependencies": {
     "playwright": "^1.59.1"
