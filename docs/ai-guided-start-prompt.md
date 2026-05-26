@@ -62,6 +62,9 @@ Let the user answer with a number whenever possible.
 
 6. If the user chooses to create a new work browser:
 - explain that a separate browser window will open
+- explain that the sign-in state will be saved under this project so it can be reused later
+- explain that the user can later ask the AI assistant to clear the saved sign-in state
+- after setup succeeds, show the work browser folder and session setting file so the AI assistant can help clear them later
 - explain that they should sign in there
 - run the appropriate cbs-workflows setup command in the background
 - wait for the user to confirm sign-in is complete
@@ -78,7 +81,7 @@ Only show terminal commands if the environment requires it or the user explicitl
 
 9. If verification fails, explain it in plain language and offer choices.
 For example:
-"I found your previous work browser setting, but I cannot connect to it right now. It may be closed."
+"I found your previous work browser setting, but I cannot connect to it right now. I will try reopening it with the saved sign-in folder first."
 Then offer:
 - create a new work browser
 - cancel for now

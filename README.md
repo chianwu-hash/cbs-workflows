@@ -124,6 +124,12 @@ Verify an existing session:
 npm run browser:smoke -- -- --session-file .browser-sessions/gemini-chrome-9333.json
 ```
 
+By default, successful sessions are saved so they can be reused later. If you are using a shared or temporary machine and do not want to add the browser session to the reusable session list, pass `--no-save`:
+
+```powershell
+node scripts/browser-session-setup.js --app gemini --browser chrome --auto-port --no-save
+```
+
 ## Structure
 
 - `lib/browser-session-init/`
@@ -147,6 +153,15 @@ const { readSessionConfig } = require('./lib/browser-session-init');
 
 const session = readSessionConfig('.browser-sessions/gemini-chrome-9333.json');
 const browser = await chromium.connectOverCDP(session.cdpUrl);
+```
+
+Login state is kept by the browser profile directory in `userDataDir`. The CDP port is only the live connection endpoint. If a saved browser is still open, workflows can reconnect to its `cdpUrl`; if it is closed, start Chrome or Edge again with the same `userDataDir` to reuse the logged-in account state.
+
+To clear a saved login session, ask the AI assistant to clear the work browser sign-in state, or close the work browser and delete both the profile directory and its session config:
+
+```powershell
+Remove-Item -Recurse -Force .browser-profiles\gemini-chrome-9333
+Remove-Item -Force .browser-sessions\gemini-chrome-9333.json
 ```
 
 ## Security

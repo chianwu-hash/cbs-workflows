@@ -29,6 +29,7 @@ function parseArgs(argv) {
     launch: true,
     waitForLogin: true,
     verify: true,
+    saveSession: true,
     json: false,
     assumeYes: false,
     appProvided: false,
@@ -61,6 +62,8 @@ function parseArgs(argv) {
       options.waitForLogin = false;
     } else if (arg === '--no-verify') {
       options.verify = false;
+    } else if (arg === '--no-save') {
+      options.saveSession = false;
     } else if (arg === '--json') {
       options.json = true;
     } else if (arg === '--yes' || arg === '-y') {
@@ -180,7 +183,7 @@ function printHumanSummary(summary, sessionFile, verification) {
   console.log(`Port: ${summary.port}`);
   console.log(`CDP URL: ${summary.cdpUrl}`);
   console.log(`User data dir: ${summary.userDataDir}`);
-  console.log(`Session file: ${sessionFile}`);
+  console.log(`Session file: ${sessionFile || '(not saved)'}`);
   console.log('');
   console.log('Launch command:');
   console.log(`  ${summary.launchCommand}`);
@@ -205,11 +208,13 @@ async function main() {
       browserId: browser,
       port,
     }, options.assumeYes);
-    const sessionFile = options.sessionFile || defaultSessionFile({
+    const sessionFile = options.saveSession
+      ? options.sessionFile || defaultSessionFile({
       appId: app,
       browserId: browser,
-      port,
-    });
+        port,
+      })
+      : '';
 
     const summary = buildSessionConfig({
       appId: app,
@@ -242,7 +247,9 @@ async function main() {
       verification,
     };
 
-    writeSessionConfig(sessionFile, config);
+    if (options.saveSession) {
+      writeSessionConfig(sessionFile, config);
+    }
 
     if (options.json) {
       console.log(JSON.stringify(config, null, 2));

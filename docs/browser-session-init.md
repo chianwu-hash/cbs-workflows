@@ -79,6 +79,14 @@ The extra `--` after `npm run browser:init --` is intentional for Windows / npm 
 node scripts/browser-session-setup.js --app gemini --browser chrome --auto-port --yes
 ```
 
+By default, successful sessions are written to `.browser-sessions/` so they can be selected again later. The browser's signed-in state is kept in `.browser-profiles/`.
+
+To launch a browser without adding it to the reusable session list:
+
+```powershell
+node scripts/browser-session-setup.js --app gemini --browser chrome --auto-port --no-save
+```
+
 ## Session Config Format
 
 Session configs are local JSON files. They are intentionally ignored by git.
@@ -110,6 +118,19 @@ Example shape:
 ```
 
 Downstream workflows should read `cdpUrl` from this file and connect with `chromium.connectOverCDP(cdpUrl)`.
+
+The login state itself is stored in `userDataDir`, not in the CDP port. The port only exposes a currently running browser to Playwright. To reuse an account after closing the browser, relaunch the browser with the same `userDataDir`.
+
+The guided start flow remembers sessions by default. If a remembered browser is no longer running, it tries to reopen the browser with the saved `userDataDir` and the saved port before asking the user to create a new session.
+
+To clear a saved login session, the user can ask the AI assistant to clear the work browser sign-in state. The assistant should first close the work browser if needed, then delete the profile directory and the matching session config:
+
+```powershell
+Remove-Item -Recurse -Force .browser-profiles\gemini-chrome-9333
+Remove-Item -Force .browser-sessions\gemini-chrome-9333.json
+```
+
+Deleting only the session config removes it from the reusable session list, but the browser login data remains in the profile directory. Deleting the profile directory clears the browser-side login state.
 
 ## Windows / PowerShell Notes
 
