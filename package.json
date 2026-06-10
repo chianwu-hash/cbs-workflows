@@ -6,12 +6,14 @@
   "main": "index.js",
   "exports": {
     ".": "./index.js",
-    "./browser-session-init": "./lib/browser-session-init/index.js"
+    "./browser-session-init": "./lib/browser-session-init/index.js",
+    "./cdp-tools-adapter": "./lib/cdp-tools-adapter/index.js"
   },
   "bin": {
     "cbs-browser-init": "scripts/browser-session-setup.js",
     "cbs-browser-smoke": "scripts/browser-smoke.js",
-    "cbs-guided-start": "scripts/guided-start.js"
+    "cbs-guided-start": "scripts/guided-start.js",
+    "cbs-cdp-guided-start": "scripts/cdp-tools-guided-start.js"
   },
   "files": [
     "index.js",
@@ -24,7 +26,8 @@
     "browser:smoke": "node scripts/browser-smoke.js",
     "browser:init": "node scripts/browser-session-setup.js",
     "browser:session-setup": "node scripts/browser-session-setup.js",
-    "guided:start": "node scripts/guided-start.js"
+    "guided:start": "node scripts/guided-start.js",
+    "guided:cdp-tools": "node scripts/cdp-tools-guided-start.js"
   },
   "dependencies": {
     "playwright": "^1.60.0"

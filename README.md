@@ -57,8 +57,11 @@ npm run browser:init
 For a beginner-friendly guided flow in Traditional Chinese:
 
 ```powershell
-npm run guided:start
+npm run guided:cdp-tools
 ```
+
+The older standalone launcher remains available as `npm run guided:start` for
+compatibility while the workflow is being refactored.
 
 ## Guided Start For Teachers And General Users
 
@@ -73,7 +76,7 @@ The expected experience is:
 - the AI explains that it will open a dedicated work browser that AI can help operate
 - the AI asks simple questions, one at a time
 - the user answers with a number or short reply
-- the AI launches the browser setup flow in the background
+- the AI launches the browser setup flow through `cdp-tools` when available
 - the user logs in in the opened browser window
 - the AI verifies the session and continues to the real task
 
@@ -97,6 +100,12 @@ For this beginner-friendly flow, avoid exposing technical terms such as CDP, por
 
 If you want a ready-to-paste AI assistant prompt for this guided flow, see `docs/ai-guided-start-prompt.md`.
 For a Traditional Chinese teaching version, see `docs/ai-guided-start-prompt.zh-TW.md`.
+
+To run the shared-launcher guided flow directly:
+
+```powershell
+npm run guided:cdp-tools
+```
 
 ## Install In Another Project
 

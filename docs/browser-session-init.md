@@ -16,6 +16,14 @@ D:\projects\cdp-tools
 
 Use `cdp-launch` and `cdp-status` for new browser sessions where practical. Keep this module focused on guided setup, session selection, connection verification, and workflow handoff while the launch path is refactored.
 
+For the current shared-launcher guided path, use:
+
+```powershell
+npm run guided:cdp-tools
+```
+
+That script uses `lib/cdp-tools-adapter/` to call `D:\projects\cdp-tools\bin\cdp-launch.ps1`, then verifies and saves a reusable session config.
+
 This module owns only the browser/session foundation:
 
 - choose or receive a remote debugging port
