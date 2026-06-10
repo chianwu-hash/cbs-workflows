@@ -3,6 +3,7 @@
 const { chromium } = require('playwright');
 const {
   assertLocalCdpUrl,
+  disconnectPlaywrightBrowser,
   readSessionConfig,
 } = require('../lib/browser-session-init');
 
@@ -56,7 +57,7 @@ async function main() {
       )
     );
   } finally {
-    await browser.disconnect();
+    await disconnectPlaywrightBrowser(browser);
   }
 }
 
