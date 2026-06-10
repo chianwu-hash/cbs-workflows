@@ -6,6 +6,16 @@
 
 It prepares a real Chrome, Edge, or Chromium browser session that can be reused by later modules such as Gemini, Canva, Google Drive, or NotebookLM automation.
 
+## Current Status
+
+This initializer is a compatibility layer from the earlier standalone browser-session design. For new work on this machine, browser launch and profile ownership should move to the shared CDP tools in:
+
+```text
+D:\projects\cdp-tools
+```
+
+Use `cdp-launch` and `cdp-status` for new browser sessions where practical. Keep this module focused on guided setup, session selection, connection verification, and workflow handoff while the launch path is refactored.
+
 This module owns only the browser/session foundation:
 
 - choose or receive a remote debugging port

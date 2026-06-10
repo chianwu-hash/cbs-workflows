@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 const { chromium } = require('playwright');
-const { readSessionConfig } = require('../lib/browser-session-init');
+const {
+  assertLocalCdpUrl,
+  readSessionConfig,
+} = require('../lib/browser-session-init');
 
 function parseArgs(argv) {
   const options = {
@@ -29,6 +32,7 @@ function parseArgs(argv) {
 
 async function main() {
   const { cdpUrl } = parseArgs(process.argv.slice(2));
+  assertLocalCdpUrl(cdpUrl);
   const browser = await chromium.connectOverCDP(cdpUrl);
 
   try {
@@ -52,7 +56,7 @@ async function main() {
       )
     );
   } finally {
-    await browser.close();
+    await browser.disconnect();
   }
 }
 

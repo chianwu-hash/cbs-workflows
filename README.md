@@ -6,6 +6,25 @@ CBS stands for CDP Browser Session.
 
 This repo was extracted from `browser-automation-workflow` so browser launch, login-session preparation, and Playwright CDP connectivity can be reused by higher-level projects such as Gemini, Canva, Google Drive, and NotebookLM workflows.
 
+## Current Safety Direction
+
+For new work on this machine, use the shared CDP foundation first:
+
+```powershell
+cdp-launch chatgpt
+cdp-status
+```
+
+The shared launcher and safe client live in:
+
+```text
+D:\projects\cdp-tools
+```
+
+This repo should become the guided workflow layer above `cdp-tools`: it can ask beginner-friendly questions, remember usable sessions, verify connection state, and continue to the real task. Browser launch, profile root, CDP URL policy, polling, screenshots, and low-level safety defaults should be owned by `cdp-tools`.
+
+The current `browser:init` and `guided:start` launch paths are kept for compatibility while the repo is being refactored. Prefer `cdp-tools` for new browser sessions.
+
 ## Purpose
 
 This repository provides the foundation layer for browser automation that depends on:
