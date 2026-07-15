@@ -13,6 +13,10 @@ CBS stands for CDP Browser Session. The workflow pattern in this repo is:
 5. Verify Playwright can connect to the session.
 6. Save a local session config for downstream workflows.
 
+The implementation is layered: product repositories depend on CBS, and CBS
+depends on `cdp-tools` for all low-level browser lifecycle operations. A clean
+machine only needs `npm install`; no machine-global CDP commands are required.
+
 ## Shared Concerns
 
 ### 1. Session Reuse
@@ -31,7 +35,7 @@ CBS stands for CDP Browser Session. The workflow pattern in this repo is:
 
 - Use a dedicated profile per service, account, or workflow family when possible.
 - Do not reuse a normal daily browsing profile for automation unless you deliberately want that state.
-- Keep `.browser-profiles/` out of git.
+- Keep browser profiles outside product repositories and out of git.
 
 ### 4. Evidence
 

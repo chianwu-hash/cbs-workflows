@@ -1,226 +1,67 @@
 # Browser Session Init
 
-## Purpose
+`browser-session-init` is the guided session layer between product workflows
+and `cdp-tools`.
 
-`browser-session-init` is the shared initialization layer for browser automation workflows.
+## Ownership
 
-It prepares a real Chrome, Edge, or Chromium browser session that can be reused by later modules such as Gemini, Canva, Google Drive, or NotebookLM automation.
+CBS owns:
 
-## Current Status
+- target application and login URL selection
+- interactive or flag-based setup
+- manual login handoff
+- Playwright CDP verification
+- reusable `.browser-sessions/*.json` metadata
 
-This initializer is a compatibility layer from the earlier standalone browser-session design. For new work on this machine, browser launch and profile ownership should move to the shared CDP tools in:
+`cdp-tools` owns:
 
-```text
-D:\projects\cdp-tools
-```
+- Chrome or Edge discovery
+- local port validation and free-port selection
+- portable persistent profile roots
+- browser process launch
+- CDP endpoint readiness
+- low-level safety defaults
 
-Use `cdp-launch` and `cdp-status` for new browser sessions where practical. Keep this module focused on guided setup, session selection, connection verification, and workflow handoff while the launch path is refactored.
+CBS must not spawn browsers with raw `--remote-debugging-port` arguments.
 
-For the current shared-launcher guided path, use:
-
-```powershell
-npm run guided:cdp-tools
-```
-
-That script uses `lib/cdp-tools-adapter/` to call `D:\projects\cdp-tools\bin\cdp-launch.ps1`, then verifies and saves a reusable session config.
-
-This module owns only the browser/session foundation:
-
-- choose or receive a remote debugging port
-- find a free port when the operator does not know one
-- create or reuse a persistent browser profile directory
-- launch the browser with remote debugging enabled
-- open the target service login URL
-- let the operator log in manually
-- verify Playwright can connect through CDP
-- write a reusable session config file
-
-It does not automate login, prompts, image generation, file export, or service-specific business logic.
-
-## Files
-
-- `lib/browser-session-init/index.js`
-  reusable module functions
-- `scripts/browser-session-setup.js`
-  interactive CLI entry point
-- `lib/session-setup.js`
-  compatibility export for older imports
-
-## Usage Flow
-
-Install dependencies first:
+## Usage
 
 ```powershell
 npm install
+npm run browser:init -- -- --app chatgpt --browser chrome --auto-port --yes
 ```
 
-Run the interactive initializer:
+To connect to an existing local CDP browser:
 
 ```powershell
-npm run browser:init
+npm run browser:init -- -- --app chatgpt --browser chrome --port 9222 --no-launch --no-wait --yes
 ```
 
-The script will ask for:
-
-- target app, such as `gemini`, `canva`, or `drive`
-- browser, such as `chrome` or `edge`
-- remote debugging port
-- browser profile / user data directory
-
-If you do not know which port to use, press Enter at the port prompt. The script will find a free port starting at `9222`.
-
-After the browser opens, sign in to the target service in that browser window. Return to PowerShell and press Enter. The script will verify Playwright CDP connectivity and write a session file under `.browser-sessions/`.
-
-Common non-interactive examples:
+To inspect endpoints or verify a saved session:
 
 ```powershell
-npm run browser:init -- -- --app gemini --browser chrome --auto-port --yes
+npm run browser:status
+npm run browser:smoke -- -- --session-file .browser-sessions/chatgpt-chrome-9222.json
 ```
 
-```powershell
-npm run browser:init -- -- --app canva --browser edge --port 9333 --yes
-```
+## Session Shape
 
-```powershell
-npm run browser:init -- -- --app drive --browser chrome --port 9444 --user-data-dir .browser-profiles/drive-main --yes
-```
+CBS writes schema version 2 session configs with `source: "cdp-tools"`, the
+local `cdpUrl`, portable profile information, browser metadata, and Playwright
+verification results. Downstream workflows should consume `cdpUrl` or the
+session file and should not launch Chrome themselves.
 
-To print the launch command and session file without launching a browser:
+## Profiles
 
-```powershell
-npm run browser:init -- -- --app gemini --port 9333 --print-only --yes
-```
+The default profile root comes from `cdp-tools`:
 
-The extra `--` after `npm run browser:init --` is intentional for Windows / npm 11 flag forwarding. Direct Node invocation also works:
+- `CDP_PROFILE_ROOT`, when explicitly configured
+- `%LOCALAPPDATA%\cdp-tools\profiles` on Windows
+- `~/.local/share/cdp-tools/profiles` on other platforms
 
-```powershell
-node scripts/browser-session-setup.js --app gemini --browser chrome --auto-port --yes
-```
+The session files remain under `.browser-sessions/` and are ignored by git.
 
-By default, successful sessions are written to `.browser-sessions/` so they can be selected again later. The browser's signed-in state is kept in `.browser-profiles/`.
+## Security
 
-To launch a browser without adding it to the reusable session list:
-
-```powershell
-node scripts/browser-session-setup.js --app gemini --browser chrome --auto-port --no-save
-```
-
-## Session Config Format
-
-Session configs are local JSON files. They are intentionally ignored by git.
-
-Example shape:
-
-```json
-{
-  "schemaVersion": 1,
-  "appId": "gemini",
-  "appName": "Gemini",
-  "loginUrl": "https://gemini.google.com/",
-  "browserId": "chrome",
-  "browserName": "Google Chrome",
-  "browserPath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-  "port": 9333,
-  "cdpUrl": "http://127.0.0.1:9333",
-  "userDataDir": "C:\\Users\\user\\projects\\cbs-workflows\\.browser-profiles\\gemini-chrome-9333",
-  "launchCommand": "'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' --remote-debugging-port=9333 --remote-debugging-address=127.0.0.1 --user-data-dir='...'",
-  "sessionFile": "C:\\Users\\user\\projects\\cbs-workflows\\.browser-sessions\\gemini-chrome-9333.json",
-  "verifiedAt": "2026-04-23T00:00:00.000Z",
-  "verification": {
-    "connected": true,
-    "contextCount": 1,
-    "pageCount": 1,
-    "urls": ["https://gemini.google.com/"]
-  }
-}
-```
-
-Downstream workflows should read `cdpUrl` from this file and connect with `chromium.connectOverCDP(cdpUrl)`.
-
-The login state itself is stored in `userDataDir`, not in the CDP port. The port only exposes a currently running browser to Playwright. To reuse an account after closing the browser, relaunch the browser with the same `userDataDir`.
-
-The guided start flow remembers sessions by default. If a remembered browser is no longer running, it tries to reopen the browser with the saved `userDataDir` and the saved port before asking the user to create a new session.
-
-To clear a saved login session, the user can ask the AI assistant to clear the work browser sign-in state. The assistant should first close the work browser if needed, then delete the profile directory and the matching session config:
-
-```powershell
-Remove-Item -Recurse -Force .browser-profiles\gemini-chrome-9333
-Remove-Item -Force .browser-sessions\gemini-chrome-9333.json
-```
-
-Deleting only the session config removes it from the reusable session list, but the browser login data remains in the profile directory. Deleting the profile directory clears the browser-side login state.
-
-## Windows / PowerShell Notes
-
-The default profile path is inside the repo:
-
-```text
-.browser-profiles/<app>-<browser>-<port>
-```
-
-The default session config path is:
-
-```text
-.browser-sessions/<app>-<browser>-<port>.json
-```
-
-Both directories are ignored by git because they can contain cookies, login tokens, local storage, and account-specific state.
-
-If Chrome or Edge cannot be found automatically, set an explicit browser path:
-
-```powershell
-$env:CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-npm run browser:init -- -- --app gemini --browser chrome --port 9333
-```
-
-## Troubleshooting
-
-### Port Is Already In Use
-
-Choose another port or let the script find one:
-
-```powershell
-npm run browser:init -- -- --app gemini --auto-port
-```
-
-### Playwright Cannot Connect
-
-Check that the browser was launched by this script or with matching flags:
-
-```powershell
-chrome.exe --remote-debugging-port=9333 --remote-debugging-address=127.0.0.1 --user-data-dir=".browser-profiles\gemini-chrome-9333"
-```
-
-Then verify:
-
-```powershell
-npm run browser:smoke -- -- --cdp-url http://127.0.0.1:9333
-```
-
-Or verify from a saved session file:
-
-```powershell
-npm run browser:smoke -- -- --session-file .browser-sessions/gemini-chrome-9333.json
-```
-
-### Login Is Missing In Later Runs
-
-Make sure later runs reuse the same `userDataDir` or the same saved session config. A different profile directory is a different browser identity.
-
-### Browser Opens But Target Site Is Not Logged In
-
-Log in manually in the launched browser window. The module intentionally avoids automating credentials or two-factor prompts.
-
-## Security Reminders
-
-Do not commit:
-
-- `.browser-profiles/`
-- `.browser-sessions/`
-- cookies
-- tokens
-- screenshots with private account data
-- `.env` files
-- downloaded private files
-
-Treat browser profile directories as secrets. Anyone with the profile may be able to reuse the logged-in account session.
+Treat profile directories and session metadata as sensitive. Do not commit
+profiles, session files, cookies, tokens, or private screenshots.

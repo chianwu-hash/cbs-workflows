@@ -54,10 +54,13 @@ function parseArgs(argv) {
       options.sessionFile = path.resolve(process.cwd(), argv[++i]);
     } else if (arg === '--login-url' && argv[i + 1]) {
       options.loginUrl = argv[++i];
-    } else if (arg === '--print-only' || arg === '--no-launch') {
+    } else if (arg === '--print-only') {
       options.launch = false;
       options.waitForLogin = false;
       options.verify = false;
+    } else if (arg === '--no-launch') {
+      options.launch = false;
+      options.waitForLogin = false;
     } else if (arg === '--no-wait') {
       options.waitForLogin = false;
     } else if (arg === '--no-verify') {

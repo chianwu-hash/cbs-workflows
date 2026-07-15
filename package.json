@@ -1,6 +1,6 @@
 {
   "name": "cbs-workflows",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CDP Browser Session workflows for reusable browser automation over logged-in, persistent sessions.",
   "type": "commonjs",
   "main": "index.js",
@@ -11,6 +11,7 @@
   },
   "bin": {
     "cbs-browser-init": "scripts/browser-session-setup.js",
+    "cbs-browser-status": "scripts/cdp-status.js",
     "cbs-browser-smoke": "scripts/browser-smoke.js",
     "cbs-guided-start": "scripts/guided-start.js",
     "cbs-cdp-guided-start": "scripts/cdp-tools-guided-start.js"
@@ -23,13 +24,16 @@
     "README.md"
   ],
   "scripts": {
+    "check": "node scripts/check.js",
     "browser:smoke": "node scripts/browser-smoke.js",
+    "browser:status": "node scripts/cdp-status.js",
     "browser:init": "node scripts/browser-session-setup.js",
     "browser:session-setup": "node scripts/browser-session-setup.js",
     "guided:start": "node scripts/guided-start.js",
     "guided:cdp-tools": "node scripts/cdp-tools-guided-start.js"
   },
   "dependencies": {
+    "cdp-tools": "github:chianwu-hash/cdp-tools",
     "playwright": "^1.60.0"
   }
 }

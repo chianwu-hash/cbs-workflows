@@ -44,7 +44,7 @@ async function waitForEnter(rl, question) {
 
 function printWelcome() {
   console.log('我會用 cdp-tools 幫你開啟一個可供 AI 協助操作的工作瀏覽器。');
-  console.log('這個流程會使用共用安全底座，瀏覽器資料會放在 D:\\chrome-cdp-profiles。');
+  console.log('這個流程會使用已安裝的共用安全底座，瀏覽器資料會放在使用者專屬的 profile 目錄。');
 }
 
 function printSuccess(config) {
@@ -80,7 +80,7 @@ async function main() {
     });
 
     console.log('');
-    console.log('我會使用這個 shared launcher：');
+    console.log('我會使用這個 shared launcher API：');
     console.log(launchPath);
     console.log('');
     console.log('準備開啟工作瀏覽器：');
